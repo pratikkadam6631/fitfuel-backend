@@ -14,9 +14,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.http.MediaType;
 
 import com.fitfuel.backend.security.CustomUserDetailsService;
 import com.fitfuel.backend.security.JwtAuthenticationFilter;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableMethodSecurity
@@ -45,12 +48,24 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll() 
+                .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
 //                .requestMatchers("/api/products/**").permitAll()
 //                .requestMatchers("/api/auth/**", "/error").permitAll()
                 .anyRequest().authenticated()
-               
+
             )
+
+            .exceptionHandling(exception -> exception
+                    .authenticationEntryPoint((request, response, authException) -> {
+
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+                        response.getWriter().write(
+                            "{\"message\":\"Authentication is required\",\"status\":401}"
+                        );
+                    })
+                )
 
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -84,4 +99,3 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 }
- 

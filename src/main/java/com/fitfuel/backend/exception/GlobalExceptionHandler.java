@@ -8,12 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import com.fitfuel.backend.exception.FitnessProfileAlreadyExistsException;
 
 import com.fitfuel.backend.dto.response.ErrorResponse;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-	
+
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<Map<String, String>> handleValidationException(
 	        MethodArgumentNotValidException ex) {
@@ -25,9 +26,7 @@ public class GlobalExceptionHandler {
 
 	    return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
 	}
-	
-	
-	
+
 	 @ExceptionHandler(EmailAlreadyExistsException.class)
 	    public ResponseEntity<ErrorResponse> handleEmailAlreadyExistsException(
 	            EmailAlreadyExistsException ex) {
@@ -39,8 +38,6 @@ public class GlobalExceptionHandler {
 	        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
 	    }
 
-	 
-	 
 	    @ExceptionHandler(InvalidCredentialsException.class)
 	    public ResponseEntity<ErrorResponse> handleInvalidCredentialsException(
 	            InvalidCredentialsException ex) {
@@ -51,7 +48,7 @@ public class GlobalExceptionHandler {
 
 	        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
 	    }
-	    
+
 	    @ExceptionHandler(ProductNotFoundException.class)
 	    public ResponseEntity<ErrorResponse> handleProductNotFoundException(
 	            ProductNotFoundException exception) {
@@ -66,7 +63,20 @@ public class GlobalExceptionHandler {
 	                HttpStatus.NOT_FOUND
 	        );
 	    }
-	    
-	    
 
-}
+	    @ExceptionHandler(FitnessProfileAlreadyExistsException.class)
+	    public ResponseEntity<ErrorResponse> handleFitnessProfileAlreadyExists(
+	            FitnessProfileAlreadyExistsException exception) {
+
+	        ErrorResponse errorResponse = new ErrorResponse(
+	                exception.getMessage(),
+	                HttpStatus.CONFLICT.value()
+	        );
+
+	        return new ResponseEntity<>(
+	                errorResponse,
+	                HttpStatus.CONFLICT
+	        );
+	    }
+
+	}
