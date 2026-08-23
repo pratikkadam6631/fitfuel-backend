@@ -60,19 +60,72 @@ public class FitnessProfileServiceImpl implements FitnessProfileService {
 	    @Override
 	    public FitnessProfileResponse getMyProfile(String email) {
 
-	        throw new UnsupportedOperationException(
-	                "Get profile is not implemented yet"
-	        );
+	        User user = userRepository.findByEmail(email)
+	                .orElseThrow(() ->
+	                        new ResourceNotFoundException(
+	                                "User not found with email: " + email
+	                        )
+	                );
+
+	        FitnessProfile fitnessProfile =
+	                fitnessProfileRepository.findByUser_Id(user.getId())
+	                        .orElseThrow(() ->
+	                                new ResourceNotFoundException(
+	                                        "Fitness profile not found for this user"
+	                                )
+	                        );
+
+	        return fitnessProfileMapper.toResponse(fitnessProfile);
 	    }
 
 	    @Override
-	    public FitnessProfileResponse updateProfile( String email, FitnessProfileRequest request) {
+	    public FitnessProfileResponse updateProfile(
+	            String email,
+	            FitnessProfileRequest request) {
 
-	        throw new UnsupportedOperationException(
-	                "Update profile is not implemented yet"
-	        );
+	        User user = userRepository.findByEmail(email)
+	                .orElseThrow(() ->
+	                        new ResourceNotFoundException(
+	                                "User not found with email: " + email
+	                        )
+	                );
+
+	        FitnessProfile fitnessProfile =
+	                fitnessProfileRepository.findByUser_Id(user.getId())
+	                        .orElseThrow(() ->
+	                                new ResourceNotFoundException(
+	                                        "Fitness profile not found for this user"
+	                                )
+	                        );
+
+	        fitnessProfileMapper.updateEntity(request, fitnessProfile);
+
+	        FitnessProfile updatedProfile =
+	                fitnessProfileRepository.save(fitnessProfile);
+
+	        return fitnessProfileMapper.toResponse(updatedProfile);
 	    }
+	    
+	    @Override
+	    public void deleteProfile(String email) {
 
+	        User user = userRepository.findByEmail(email)
+	                .orElseThrow(() ->
+	                        new ResourceNotFoundException(
+	                                "User not found with email: " + email
+	                        )
+	                );
+
+	        FitnessProfile fitnessProfile =
+	                fitnessProfileRepository.findByUser_Id(user.getId())
+	                        .orElseThrow(() ->
+	                                new ResourceNotFoundException(
+	                                        "Fitness profile not found for this user"
+	                                )
+	                        );
+
+	        fitnessProfileRepository.delete(fitnessProfile);
+	    }
 
 
 }

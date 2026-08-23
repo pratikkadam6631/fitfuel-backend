@@ -10,5 +10,7 @@ public interface FitnessProfileService {
 	FitnessProfileResponse getMyProfile(String email);
 
 	 FitnessProfileResponse updateProfile( String email, FitnessProfileRequest request );
+	 
+	 void deleteProfile(String email);
 
 }

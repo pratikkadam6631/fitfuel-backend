@@ -78,5 +78,20 @@ public class GlobalExceptionHandler {
 	                HttpStatus.CONFLICT
 	        );
 	    }
+	    
+	    @ExceptionHandler(ResourceNotFoundException.class)
+	    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(
+	            ResourceNotFoundException exception) {
+
+	        ErrorResponse errorResponse = new ErrorResponse(
+	                exception.getMessage(),
+	                HttpStatus.NOT_FOUND.value()
+	        );
+
+	        return new ResponseEntity<>(
+	                errorResponse,
+	                HttpStatus.NOT_FOUND
+	        );
+	    }
 
 	}
